@@ -38,14 +38,14 @@
           File {{plottingStatus.currentFile.number}}/{{plottingStatus.totalFiles.number}}
         </div>
         <div>
-          ETA current file: {{getRelativeEta(plottingStatus.currentFile.eta)}}
+          ETA current file: {{getRelativeEta(plottingStatus.currentFile.eta)}} ({{(plottingStatus.currentFile.progress * 100).toFixed(2)}}%)
         </div>
         <div>
-          ETA total: {{getRelativeEta(plottingStatus.totalFiles.eta)}}
+          ETA total: {{getRelativeEta(plottingStatus.totalFiles.eta)}} ({{(plottingStatus.totalFiles.progress * 100).toFixed(2)}}%)
         </div>
       </mat-card-content>
       <mat-card-footer>
-        <mat-progress-bar style="padding-bottom: 0.4rem" mode="determinate" [value]="plottingStatus.currentFile.progress * 100">test</mat-progress-bar>
+        <mat-progress-bar style="padding-bottom: 0.4rem" mode="determinate" [value]="plottingStatus.currentFile.progress * 100"></mat-progress-bar>
         <mat-progress-bar mode="determinate" [value]="plottingStatus.totalFiles.progress * 100" class="last-progress-bar-in-card"></mat-progress-bar>
       </mat-card-footer>
     </mat-card>
