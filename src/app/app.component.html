@@ -13,18 +13,26 @@
   <div>
     System:
   </div>
-  <mat-chip-set role="list" *ngIf="startupInfo$ | async">
+  <mat-chip-set role="list" style="padding-top: 0.2em">
     <mat-chip role="listitem">Name: {{(startupInfo$ | async)?.minerName}}</mat-chip>
     <mat-chip role="listitem">Version: {{(startupInfo$ | async)?.version}}</mat-chip>
     <mat-chip role="listitem">CPU: {{(startupInfo$ | async)?.cpu}}</mat-chip>
+    <mat-chip role="listitem">Nonces: {{(startupInfo$ | async)?.threadConfig?.nonces}}</mat-chip>
+    <mat-chip role="listitem">PoSt threads: {{(startupInfo$ | async)?.threadConfig?.postThreads}}</mat-chip>
+    <mat-chip role="listitem">RandomX threads: {{(startupInfo$ | async)?.threadConfig?.randomXThreads}}</mat-chip>
+    <mat-chip role="listitem">Capacity: {{capacity$ | async}}</mat-chip>
+    <mat-chip role="listitem" *ngIf="(postRoundInfo$ | async)?.isRunning">Is scanning</mat-chip>
   </mat-chip-set>
-  <div>
+  <div *ngIf="postRoundInfo$ | async as postRoundInfo" style="padding-top: 1em">
+    Next scan {{getRelativeEta(postRoundInfo.startDate, false)}} ({{getFormattedDate(postRoundInfo.startDate)}})
+  </div>
+  <div style="padding-top: 1em">
     Active plots:
   </div>
   <div style="display: flex; gap: 1em; justify-content: center; flex-wrap: wrap; padding-top: 1em">
     <mat-card *ngFor="let plottingStatus of plottingStatus$ | async; trackBy: trackBy" class="plot-status-card">
       <mat-card-header>
-        <mat-card-subtitle>{{plottingStatus.nodeId}}</mat-card-subtitle>
+        <mat-card-subtitle style="word-break: break-word">{{plottingStatus.nodeId}}</mat-card-subtitle>
         <mat-card-title>{{plottingStatus.path}}</mat-card-title>
       </mat-card-header>
       <mat-card-content>

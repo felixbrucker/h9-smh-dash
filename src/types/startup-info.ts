@@ -4,4 +4,11 @@ export interface StartupInfo {
   plotPaths: number
   postRsVersion: string
   cpu: string
+  threadConfig: ThreadConfig
+}
+
+interface ThreadConfig {
+  nonces: number
+  postThreads: number
+  randomXThreads: number
 }

@@ -22,12 +22,15 @@ import {MatFormField, MatLabel} from '@angular/material/form-field'
 import {MatInput} from '@angular/material/input'
 import {FormsModule} from '@angular/forms'
 import {MatButton} from '@angular/material/button'
+import {PostRoundInfo} from '../types/post-round-info'
 
 dayjs.extend(relativeTime)
 
 interface ServerToClientEvents {
   'startup-info': (startupInfo: StartupInfo) => void
   'plotting-status': (plottingStatus: Record<string, PlottingStatus>) => void
+  'capacity': (capacity: string) => void
+  'post-round-info': (postRoundInfo: PostRoundInfo) => void
 }
 
 @Component({
@@ -46,13 +49,19 @@ export class AppComponent {
   public authToken?: string
   public readonly startupInfo$: Observable<StartupInfo>
   public readonly plottingStatus$: Observable<PlottingStatus[]>
+  public readonly capacity$: Observable<string>
+  public readonly postRoundInfo$: Observable<PostRoundInfo>
   private readonly startupInfoSubject: Subject<StartupInfo> = new Subject<StartupInfo>()
   private readonly plottingStatusSubject: Subject<PlottingStatus[]> = new Subject<PlottingStatus[]>()
+  private readonly capacitySubject: Subject<string> = new Subject<string>()
+  private readonly postRoundInfoSubject: Subject<PostRoundInfo> = new Subject<PostRoundInfo>()
   private socket?: Socket<ServerToClientEvents>
 
   public constructor() {
     this.startupInfo$ = this.startupInfoSubject.pipe(shareReplay(1))
     this.plottingStatus$ = this.plottingStatusSubject.asObservable()
+    this.capacity$ = this.capacitySubject.asObservable()
+    this.postRoundInfo$ = this.postRoundInfoSubject.asObservable()
     this.monitorUrl = localStorage.getItem('monitorUrl') ?? undefined
     this.authToken = localStorage.getItem('authToken') ?? undefined
     this.connect()
@@ -70,13 +79,19 @@ export class AppComponent {
     })
     this.socket.on('startup-info', (startupInfo) => this.startupInfoSubject.next(startupInfo))
     this.socket.on('plotting-status', plottingStatus => this.plottingStatusSubject.next(Object.values(plottingStatus)))
+    this.socket.on('capacity', (capacity) => this.capacitySubject.next(capacity))
+    this.socket.on('post-round-info', (postRoundInfo) => this.postRoundInfoSubject.next(postRoundInfo))
   }
 
   public trackBy(index: number, plottingStatus: PlottingStatus): string {
     return plottingStatus.nodeId
   }
 
-  public getRelativeEta(eta: string|Date): string {
-    return dayjs(eta).fromNow(true)
+  public getRelativeEta(eta: string|Date, withoutSuffix: boolean = true): string {
+    return dayjs(eta).fromNow(withoutSuffix)
+  }
+
+  public getFormattedDate(date: string|Date): string {
+    return dayjs(date).format('YYYY-MM-DD HH:mm')
   }
 }
