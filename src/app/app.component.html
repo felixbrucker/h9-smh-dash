@@ -1,0 +1,53 @@
+<form>
+  <mat-form-field>
+    <mat-label>Monitor URL</mat-label>
+    <input matInput [(ngModel)]="monitorUrl" [ngModelOptions]="{standalone: true}">
+  </mat-form-field>
+  <mat-form-field style="padding-left: 1em">
+    <mat-label>Auth token</mat-label>
+    <input matInput [(ngModel)]="authToken" [ngModelOptions]="{standalone: true}">
+  </mat-form-field>
+  <button style="margin-left: 1em" mat-raised-button color="primary" (click)="connect()" [disabled]="!monitorUrl || !authToken">Connect</button>
+</form>
+<div *ngIf="isConnected">
+  <div>
+    System:
+  </div>
+  <mat-chip-set role="list" *ngIf="startupInfo$ | async">
+    <mat-chip role="listitem">Name: {{(startupInfo$ | async)?.minerName}}</mat-chip>
+    <mat-chip role="listitem">Version: {{(startupInfo$ | async)?.version}}</mat-chip>
+    <mat-chip role="listitem">CPU: {{(startupInfo$ | async)?.cpu}}</mat-chip>
+  </mat-chip-set>
+  <div>
+    Active plots:
+  </div>
+  <div style="display: flex; gap: 1em; justify-content: center; flex-wrap: wrap; padding-top: 1em">
+    <mat-card *ngFor="let plottingStatus of plottingStatus$ | async; trackBy: trackBy" class="plot-status-card">
+      <mat-card-header>
+        <mat-card-subtitle>{{plottingStatus.nodeId}}</mat-card-subtitle>
+        <mat-card-title>{{plottingStatus.path}}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div>
+          Units: {{plottingStatus.numUnits}} ({{plottingStatus.totalFiles.sizeInGib}} GiB)
+        </div>
+        <div>
+          Speed: {{plottingStatus.speedFormatted}}
+        </div>
+        <div>
+          File {{plottingStatus.currentFile.number}}/{{plottingStatus.totalFiles.number}}
+        </div>
+        <div>
+          ETA current file: {{getRelativeEta(plottingStatus.currentFile.eta)}}
+        </div>
+        <div>
+          ETA total: {{getRelativeEta(plottingStatus.totalFiles.eta)}}
+        </div>
+      </mat-card-content>
+      <mat-card-footer>
+        <mat-progress-bar style="padding-bottom: 0.4rem" mode="determinate" [value]="plottingStatus.currentFile.progress * 100">test</mat-progress-bar>
+        <mat-progress-bar mode="determinate" [value]="plottingStatus.totalFiles.progress * 100" class="last-progress-bar-in-card"></mat-progress-bar>
+      </mat-card-footer>
+    </mat-card>
+  </div>
+</div>
