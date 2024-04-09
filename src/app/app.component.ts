@@ -3,7 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import {io, Socket} from 'socket.io-client'
 import {StartupInfo} from '../types/startup-info'
 import {PlottingStatus} from '../types/plotting-status'
-import {Observable, shareReplay, Subject} from 'rxjs'
+import {BehaviorSubject, map, Observable, shareReplay, Subject} from 'rxjs'
 import {AsyncPipe, JsonPipe, KeyValuePipe, NgForOf, NgIf} from '@angular/common'
 import {MatChip, MatChipListbox, MatChipOption, MatChipSet} from '@angular/material/chips'
 import {
@@ -23,6 +23,7 @@ import {MatInput} from '@angular/material/input'
 import {FormsModule} from '@angular/forms'
 import {MatButton} from '@angular/material/button'
 import {PostRoundInfo} from '../types/post-round-info'
+import {InitProofStart} from '../types/init-proof-start'
 
 dayjs.extend(relativeTime)
 
@@ -31,6 +32,7 @@ interface ServerToClientEvents {
   'plotting-status': (plottingStatus: Record<string, PlottingStatus>) => void
   'capacity': (capacity: string) => void
   'post-round-info': (postRoundInfo: PostRoundInfo) => void
+  'active-init-proofs': (activeInitProofs: Record<string, InitProofStart>) => void
 }
 
 @Component({
@@ -49,12 +51,15 @@ export class AppComponent {
   public authToken?: string
   public readonly startupInfo$: Observable<StartupInfo>
   public readonly plottingStatus$: Observable<PlottingStatus[]>
+  public readonly activeInitProofs$: Observable<InitProofStart[]>
+  public readonly hasActiveInitProofs$: Observable<boolean>
   public readonly capacity$: Observable<string>
   public readonly postRoundInfo$: Observable<PostRoundInfo>
   private readonly startupInfoSubject: Subject<StartupInfo> = new Subject<StartupInfo>()
   private readonly plottingStatusSubject: Subject<PlottingStatus[]> = new Subject<PlottingStatus[]>()
   private readonly capacitySubject: Subject<string> = new Subject<string>()
   private readonly postRoundInfoSubject: Subject<PostRoundInfo> = new Subject<PostRoundInfo>()
+  private readonly activeInitProofsSubject: BehaviorSubject<InitProofStart[]> = new BehaviorSubject<InitProofStart[]>([])
   private socket?: Socket<ServerToClientEvents>
 
   public constructor() {
@@ -62,6 +67,8 @@ export class AppComponent {
     this.plottingStatus$ = this.plottingStatusSubject.asObservable()
     this.capacity$ = this.capacitySubject.asObservable()
     this.postRoundInfo$ = this.postRoundInfoSubject.asObservable()
+    this.activeInitProofs$ = this.activeInitProofsSubject.asObservable()
+    this.hasActiveInitProofs$ = this.activeInitProofs$.pipe(map(activeInitProofs => activeInitProofs.length > 0))
     this.monitorUrl = localStorage.getItem('monitorUrl') ?? undefined
     this.authToken = localStorage.getItem('authToken') ?? undefined
     this.connect()
@@ -81,6 +88,7 @@ export class AppComponent {
     this.socket.on('plotting-status', plottingStatus => this.plottingStatusSubject.next(Object.values(plottingStatus)))
     this.socket.on('capacity', (capacity) => this.capacitySubject.next(capacity))
     this.socket.on('post-round-info', (postRoundInfo) => this.postRoundInfoSubject.next(postRoundInfo))
+    this.socket.on('active-init-proofs', activeInitProofs => this.activeInitProofsSubject.next(Object.values(activeInitProofs)))
   }
 
   public trackBy(index: number, plottingStatus: PlottingStatus): string {
@@ -89,6 +97,10 @@ export class AppComponent {
 
   public getRelativeEta(eta: string|Date, withoutSuffix: boolean = true): string {
     return dayjs(eta).fromNow(withoutSuffix)
+  }
+
+  public getElapsedTime(date: string|Date, withoutSuffix: boolean = true): string {
+    return dayjs(date).toNow(withoutSuffix)
   }
 
   public getFormattedDate(date: string|Date): string {

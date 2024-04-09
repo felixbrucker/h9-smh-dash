@@ -30,6 +30,12 @@
       Scan period active for {{getRelativeEta(postRoundInfo.endDate)}} ({{getFormattedDate(postRoundInfo.endDate)}})
     </span>
   </div>
+  <div style="padding-top: 1em" *ngIf="hasActiveInitProofs$ | async">
+    <div style="padding-bottom: 0.5em">Active init proofs:</div>
+    <div *ngFor="let activeInitProof of activeInitProofs$ | async">
+      {{activeInitProof.nodeId}} running for {{getElapsedTime(activeInitProof.startedAt)}}
+    </div>
+  </div>
   <div style="padding-top: 1em">
     Active plots:
   </div>
