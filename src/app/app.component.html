@@ -21,10 +21,14 @@
     <mat-chip role="listitem">PoSt threads: {{(startupInfo$ | async)?.threadConfig?.postThreads}}</mat-chip>
     <mat-chip role="listitem">RandomX threads: {{(startupInfo$ | async)?.threadConfig?.randomXThreads}}</mat-chip>
     <mat-chip role="listitem">Capacity: {{capacity$ | async}}</mat-chip>
-    <mat-chip role="listitem" *ngIf="(postRoundInfo$ | async)?.isRunning">Is scanning</mat-chip>
   </mat-chip-set>
   <div *ngIf="postRoundInfo$ | async as postRoundInfo" style="padding-top: 1em">
-    Next scan {{getRelativeEta(postRoundInfo.startDate, false)}} ({{getFormattedDate(postRoundInfo.startDate)}})
+    <span *ngIf="!postRoundInfo.isRunning">
+      Next scan {{getRelativeEta(postRoundInfo.startDate, false)}} ({{getFormattedDate(postRoundInfo.startDate)}})
+    </span>
+    <span *ngIf="postRoundInfo.isRunning">
+      Scan period active for {{getRelativeEta(postRoundInfo.endDate)}} ({{getFormattedDate(postRoundInfo.endDate)}})
+    </span>
   </div>
   <div style="padding-top: 1em">
     Active plots:
