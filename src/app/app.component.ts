@@ -23,7 +23,7 @@ import {MatInput} from '@angular/material/input'
 import {FormsModule} from '@angular/forms'
 import {MatButton} from '@angular/material/button'
 import {PostRoundInfo} from '../types/post-round-info'
-import {InitProofStart} from '../types/init-proof-start'
+import {ActiveInitProof, ActiveInitProofState} from '../types/active-init-proof'
 
 dayjs.extend(relativeTime)
 
@@ -32,7 +32,7 @@ interface ServerToClientEvents {
   'plotting-status': (plottingStatus: Record<string, PlottingStatus>) => void
   'capacity': (capacity: string) => void
   'post-round-info': (postRoundInfo: PostRoundInfo) => void
-  'active-init-proofs': (activeInitProofs: Record<string, InitProofStart>) => void
+  'active-init-proofs': (activeInitProofs: Record<string, ActiveInitProof>) => void
 }
 
 @Component({
@@ -51,7 +51,7 @@ export class AppComponent {
   public authToken?: string
   public readonly startupInfo$: Observable<StartupInfo>
   public readonly plottingStatus$: Observable<PlottingStatus[]>
-  public readonly activeInitProofs$: Observable<InitProofStart[]>
+  public readonly activeInitProofs$: Observable<ActiveInitProof[]>
   public readonly hasActiveInitProofs$: Observable<boolean>
   public readonly capacity$: Observable<string>
   public readonly postRoundInfo$: Observable<PostRoundInfo>
@@ -59,7 +59,7 @@ export class AppComponent {
   private readonly plottingStatusSubject: Subject<PlottingStatus[]> = new Subject<PlottingStatus[]>()
   private readonly capacitySubject: Subject<string> = new Subject<string>()
   private readonly postRoundInfoSubject: Subject<PostRoundInfo> = new Subject<PostRoundInfo>()
-  private readonly activeInitProofsSubject: BehaviorSubject<InitProofStart[]> = new BehaviorSubject<InitProofStart[]>([])
+  private readonly activeInitProofsSubject: BehaviorSubject<ActiveInitProof[]> = new BehaviorSubject<ActiveInitProof[]>([])
   private socket?: Socket<ServerToClientEvents>
 
   public constructor() {
@@ -101,6 +101,13 @@ export class AppComponent {
 
   public getElapsedTime(date: string|Date, withoutSuffix: boolean = true): string {
     return dayjs(date).toNow(withoutSuffix)
+  }
+
+  public formatState(state: ActiveInitProofState): string {
+    switch (state) {
+      case ActiveInitProofState.generatingK2Pow: return 'generating k2pow'
+      case ActiveInitProofState.readingProofOfSpace: return 'reading POS'
+    }
   }
 
   public getFormattedDate(date: string|Date): string {

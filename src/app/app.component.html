@@ -32,8 +32,23 @@
   </div>
   <div style="padding-top: 1em" *ngIf="hasActiveInitProofs$ | async">
     <div style="padding-bottom: 0.5em">Active init proofs:</div>
-    <div *ngFor="let activeInitProof of activeInitProofs$ | async">
-      {{activeInitProof.nodeId}} running for {{getElapsedTime(activeInitProof.startedAt)}}
+    <div style="display: flex; gap: 1em; justify-content: center; flex-wrap: wrap; padding-top: 1em">
+      <mat-card *ngFor="let activeInitProof of activeInitProofs$ | async" class="plot-status-card">
+        <mat-card-header>
+          <mat-card-subtitle style="word-break: break-word">{{activeInitProof.nodeId}}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div>
+            State: {{formatState(activeInitProof.state)}}
+          </div>
+          <div>
+            Elapsed: {{getElapsedTime(activeInitProof.stateStartedAt)}}
+          </div>
+          <div>
+            Elapsed total: {{getElapsedTime(activeInitProof.startedAt)}}
+          </div>
+        </mat-card-content>
+      </mat-card>
     </div>
   </div>
   <div style="padding-top: 1em">
