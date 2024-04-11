@@ -78,8 +78,8 @@
         </div>
       </mat-card-content>
       <mat-card-footer>
-        <mat-progress-bar style="padding-bottom: 0.4rem" mode="determinate" [value]="plottingStatus.currentFile.progress * 100"></mat-progress-bar>
-        <mat-progress-bar mode="determinate" [value]="plottingStatus.totalFiles.progress * 100" class="last-progress-bar-in-card"></mat-progress-bar>
+        <mat-progress-bar matTooltip="{{(plottingStatus.currentFile.progress * 100).toFixed(2)}}%" style="padding-bottom: 0.4rem" mode="determinate" [value]="plottingStatus.currentFile.progress * 100"></mat-progress-bar>
+        <mat-progress-bar matTooltip="{{(plottingStatus.totalFiles.progress * 100).toFixed(2)}}%" mode="determinate" [value]="plottingStatus.totalFiles.progress * 100" class="last-progress-bar-in-card"></mat-progress-bar>
       </mat-card-footer>
     </mat-card>
   </div>

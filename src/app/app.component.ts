@@ -24,6 +24,7 @@ import {FormsModule} from '@angular/forms'
 import {MatButton} from '@angular/material/button'
 import {PostRoundInfo} from '../types/post-round-info'
 import {ActiveInitProof, ActiveInitProofState} from '../types/active-init-proof'
+import {MatTooltip} from '@angular/material/tooltip'
 
 dayjs.extend(relativeTime)
 
@@ -38,7 +39,7 @@ interface ServerToClientEvents {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NgForOf, AsyncPipe, JsonPipe, NgIf, KeyValuePipe, MatChipSet, MatChip, MatChipListbox, MatChipOption, MatCard, MatCardContent, MatCardHeader, MatCardFooter, MatProgressBar, MatCardTitle, MatCardSubtitle, MatGridList, MatGridTile, MatFormField, MatInput, FormsModule, MatLabel, MatButton],
+  imports: [RouterOutlet, NgForOf, AsyncPipe, JsonPipe, NgIf, KeyValuePipe, MatChipSet, MatChip, MatChipListbox, MatChipOption, MatCard, MatCardContent, MatCardHeader, MatCardFooter, MatProgressBar, MatCardTitle, MatCardSubtitle, MatGridList, MatGridTile, MatFormField, MatInput, FormsModule, MatLabel, MatButton, MatTooltip],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
