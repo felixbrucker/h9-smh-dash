@@ -24,7 +24,7 @@
   </mat-chip-set>
   <div *ngIf="postRoundInfo$ | async as postRoundInfo" style="padding-top: 1em">
     <span *ngIf="!postRoundInfo.isRunning">
-      Next scan {{getRelativeEta(postRoundInfo.startDate, false)}} ({{getFormattedDate(postRoundInfo.startDate)}})
+      Next scan in {{getRelativeEta(postRoundInfo.startDate)}} ({{getFormattedDate(postRoundInfo.startDate)}})
     </span>
     <span *ngIf="postRoundInfo.isRunning">
       Scan period active for {{getRelativeEta(postRoundInfo.endDate)}} ({{getFormattedDate(postRoundInfo.endDate)}})

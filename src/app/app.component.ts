@@ -17,7 +17,6 @@ import {
 import {MatProgressBar} from '@angular/material/progress-bar'
 import {MatGridList, MatGridTile} from '@angular/material/grid-list'
 import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
 import {MatFormField, MatLabel} from '@angular/material/form-field'
 import {MatInput} from '@angular/material/input'
 import {FormsModule} from '@angular/forms'
@@ -25,8 +24,10 @@ import {MatButton} from '@angular/material/button'
 import {PostRoundInfo} from '../types/post-round-info'
 import {ActiveInitProof, ActiveInitProofState} from '../types/active-init-proof'
 import {MatTooltip} from '@angular/material/tooltip'
+import {relativeTimeExtended} from '../extensions/relative-time-extended'
 
-dayjs.extend(relativeTime)
+
+dayjs.extend(relativeTimeExtended)
 
 interface ServerToClientEvents {
   'startup-info': (startupInfo: StartupInfo) => void
@@ -96,12 +97,12 @@ export class AppComponent {
     return plottingStatus.nodeId
   }
 
-  public getRelativeEta(eta: string|Date, withoutSuffix: boolean = true): string {
-    return dayjs(eta).fromNow(withoutSuffix)
+  public getRelativeEta(eta: string|Date): string {
+    return dayjs(eta).fromNowExtended()
   }
 
-  public getElapsedTime(date: string|Date, withoutSuffix: boolean = true): string {
-    return dayjs(date).toNow(withoutSuffix)
+  public getElapsedTime(date: string|Date): string {
+    return dayjs(date).toNowExtended()
   }
 
   public formatState(state: ActiveInitProofState): string {
