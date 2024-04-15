@@ -22,7 +22,7 @@ import {MatInput} from '@angular/material/input'
 import {FormsModule} from '@angular/forms'
 import {MatButton} from '@angular/material/button'
 import {PostRoundInfo} from '../types/post-round-info'
-import {ActiveInitProof, ActiveInitProofState} from '../types/active-init-proof'
+import {ActiveProof, ActiveProofState} from '../types/active-proof'
 import {MatTooltip} from '@angular/material/tooltip'
 import {relativeTimeExtended} from '../extensions/relative-time-extended'
 
@@ -34,7 +34,8 @@ interface ServerToClientEvents {
   'plotting-status': (plottingStatus: Record<string, PlottingStatus>) => void
   'capacity': (capacity: string) => void
   'post-round-info': (postRoundInfo: PostRoundInfo) => void
-  'active-init-proofs': (activeInitProofs: Record<string, ActiveInitProof>) => void
+  'active-init-proofs': (activeInitProofs: Record<string, ActiveProof>) => void
+  'active-proofs': (activeProofs: Record<string, ActiveProof>) => void
 }
 
 @Component({
@@ -53,15 +54,18 @@ export class AppComponent {
   public authToken?: string
   public readonly startupInfo$: Observable<StartupInfo>
   public readonly plottingStatus$: Observable<PlottingStatus[]>
-  public readonly activeInitProofs$: Observable<ActiveInitProof[]>
+  public readonly activeInitProofs$: Observable<ActiveProof[]>
+  public readonly activeProofs$: Observable<ActiveProof[]>
   public readonly hasActiveInitProofs$: Observable<boolean>
+  public readonly hasActiveProofs$: Observable<boolean>
   public readonly capacity$: Observable<string>
   public readonly postRoundInfo$: Observable<PostRoundInfo>
   private readonly startupInfoSubject: Subject<StartupInfo> = new Subject<StartupInfo>()
   private readonly plottingStatusSubject: Subject<PlottingStatus[]> = new Subject<PlottingStatus[]>()
   private readonly capacitySubject: Subject<string> = new Subject<string>()
   private readonly postRoundInfoSubject: Subject<PostRoundInfo> = new Subject<PostRoundInfo>()
-  private readonly activeInitProofsSubject: BehaviorSubject<ActiveInitProof[]> = new BehaviorSubject<ActiveInitProof[]>([])
+  private readonly activeInitProofsSubject: BehaviorSubject<ActiveProof[]> = new BehaviorSubject<ActiveProof[]>([])
+  private readonly activeProofsSubject: BehaviorSubject<ActiveProof[]> = new BehaviorSubject<ActiveProof[]>([])
   private socket?: Socket<ServerToClientEvents>
 
   public constructor() {
@@ -70,7 +74,9 @@ export class AppComponent {
     this.capacity$ = this.capacitySubject.asObservable()
     this.postRoundInfo$ = this.postRoundInfoSubject.asObservable()
     this.activeInitProofs$ = this.activeInitProofsSubject.asObservable()
+    this.activeProofs$ = this.activeProofsSubject.asObservable()
     this.hasActiveInitProofs$ = this.activeInitProofs$.pipe(map(activeInitProofs => activeInitProofs.length > 0))
+    this.hasActiveProofs$ = this.activeProofs$.pipe(map(activeProofs => activeProofs.length > 0))
     this.monitorUrl = localStorage.getItem('monitorUrl') ?? undefined
     this.authToken = localStorage.getItem('authToken') ?? undefined
     this.connect()
@@ -91,6 +97,7 @@ export class AppComponent {
     this.socket.on('capacity', (capacity) => this.capacitySubject.next(capacity))
     this.socket.on('post-round-info', (postRoundInfo) => this.postRoundInfoSubject.next(postRoundInfo))
     this.socket.on('active-init-proofs', activeInitProofs => this.activeInitProofsSubject.next(Object.values(activeInitProofs)))
+    this.socket.on('active-proofs', activeProofs => this.activeProofsSubject.next(Object.values(activeProofs)))
   }
 
   public trackBy(index: number, plottingStatus: PlottingStatus): string {
@@ -105,10 +112,10 @@ export class AppComponent {
     return dayjs(date).toNowExtended()
   }
 
-  public formatState(state: ActiveInitProofState): string {
+  public formatState(state: ActiveProofState): string {
     switch (state) {
-      case ActiveInitProofState.generatingK2Pow: return 'generating k2pow'
-      case ActiveInitProofState.readingProofOfSpace: return 'reading POS'
+      case ActiveProofState.generatingK2Pow: return 'generating k2pow'
+      case ActiveProofState.readingProofOfSpace: return 'reading POS'
     }
   }
 

@@ -51,6 +51,27 @@
       </mat-card>
     </div>
   </div>
+  <div style="padding-top: 1em" *ngIf="hasActiveProofs$ | async">
+    <div style="padding-bottom: 0.5em">Active proofs:</div>
+    <div style="display: flex; gap: 1em; justify-content: center; flex-wrap: wrap; padding-top: 1em">
+      <mat-card *ngFor="let activeProof of activeProofs$ | async" class="plot-status-card">
+        <mat-card-header>
+          <mat-card-subtitle style="word-break: break-word">{{activeProof.nodeId}}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div>
+            State: {{formatState(activeProof.state)}}
+          </div>
+          <div>
+            Elapsed: {{getElapsedTime(activeProof.stateStartedAt)}}
+          </div>
+          <div>
+            Elapsed total: {{getElapsedTime(activeProof.startedAt)}}
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
   <div style="padding-top: 1em">
     Active plots:
   </div>

@@ -1,11 +1,11 @@
-export enum ActiveInitProofState {
+export enum ActiveProofState {
   generatingK2Pow = 'generatingK2Pow',
   readingProofOfSpace = 'readingProofOfSpace',
 }
 
-export interface ActiveInitProof {
+export interface ActiveProof {
   nodeId: string
   startedAt: Date
-  state: ActiveInitProofState
+  state: ActiveProofState
   stateStartedAt: Date
 }
