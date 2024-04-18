@@ -8,8 +8,8 @@
       <app-active-plots *ngIf="hasActivePlots$ | async" [plottingStatus$]="plottingStatus$"></app-active-plots>
     </div>
   </div>
-  <div style="flex-grow: 1">
-    <mat-spinner *ngIf="!isConnected" [diameter]="40"></mat-spinner>
+  <div *ngIf="!isConnected" style="flex-grow: 1">
+    <mat-spinner [diameter]="40"></mat-spinner>
   </div>
   <div>
     <button mat-icon-button color="warn" (click)="deleteDash()">
