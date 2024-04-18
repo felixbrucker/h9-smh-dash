@@ -1,107 +1,20 @@
-<form>
-  <mat-form-field>
-    <mat-label>Monitor URL</mat-label>
-    <input matInput [(ngModel)]="monitorUrl" [ngModelOptions]="{standalone: true}">
-  </mat-form-field>
-  <mat-form-field style="padding-left: 1em">
-    <mat-label>Auth token</mat-label>
-    <input matInput [(ngModel)]="authToken" [ngModelOptions]="{standalone: true}">
-  </mat-form-field>
-  <button style="margin-left: 1em" mat-raised-button color="primary" (click)="connect()" [disabled]="isConnectButtonDisabled">Connect</button>
-</form>
-<div *ngIf="isConnected">
-  <div>
-    System:
-  </div>
-  <mat-chip-set role="list" style="padding-top: 0.2em">
-    <mat-chip role="listitem">Name: {{(startupInfo$ | async)?.minerName}}</mat-chip>
-    <mat-chip role="listitem">Version: {{(startupInfo$ | async)?.version}}</mat-chip>
-    <mat-chip role="listitem">CPU: {{(startupInfo$ | async)?.cpu}}</mat-chip>
-    <mat-chip role="listitem">Nonces: {{(startupInfo$ | async)?.threadConfig?.nonces}}</mat-chip>
-    <mat-chip role="listitem">PoSt threads: {{(startupInfo$ | async)?.threadConfig?.postThreads}}</mat-chip>
-    <mat-chip role="listitem">RandomX threads: {{(startupInfo$ | async)?.threadConfig?.randomXThreads}}</mat-chip>
-    <mat-chip role="listitem">Capacity: {{capacity$ | async}}</mat-chip>
-  </mat-chip-set>
-  <div *ngIf="postRoundInfo$ | async as postRoundInfo" style="padding-top: 1em">
-    <span *ngIf="!postRoundInfo.isRunning">
-      Next scan in {{getRelativeEta(postRoundInfo.startDate)}} ({{getFormattedDate(postRoundInfo.startDate)}})
-    </span>
-    <span *ngIf="postRoundInfo.isRunning">
-      Scan period active for {{getRelativeEta(postRoundInfo.endDate)}} ({{getFormattedDate(postRoundInfo.endDate)}})
-    </span>
-  </div>
-  <div style="padding-top: 1em" *ngIf="hasActiveInitProofs$ | async">
-    <div style="padding-bottom: 0.5em">Active init proofs:</div>
-    <div style="display: flex; gap: 1em; justify-content: center; flex-wrap: wrap; padding-top: 1em">
-      <mat-card *ngFor="let activeInitProof of activeInitProofs$ | async" class="plot-status-card">
-        <mat-card-header>
-          <mat-card-subtitle style="word-break: break-word">{{activeInitProof.nodeId}}</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <div>
-            State: {{formatState(activeInitProof.state)}}
-          </div>
-          <div>
-            Elapsed: {{getElapsedTime(activeInitProof.stateStartedAt)}}
-          </div>
-          <div>
-            Elapsed total: {{getElapsedTime(activeInitProof.startedAt)}}
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  </div>
-  <div style="padding-top: 1em" *ngIf="hasActiveProofs$ | async">
-    <div style="padding-bottom: 0.5em">Active proofs:</div>
-    <div style="display: flex; gap: 1em; justify-content: center; flex-wrap: wrap; padding-top: 1em">
-      <mat-card *ngFor="let activeProof of activeProofs$ | async" class="plot-status-card">
-        <mat-card-header>
-          <mat-card-subtitle style="word-break: break-word">{{activeProof.nodeId}}</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <div>
-            State: {{formatState(activeProof.state)}}
-          </div>
-          <div>
-            Elapsed: {{getElapsedTime(activeProof.stateStartedAt)}}
-          </div>
-          <div>
-            Elapsed total: {{getElapsedTime(activeProof.startedAt)}}
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  </div>
-  <div style="padding-top: 1em" *ngIf="hasActivePlots$ | async">
-    <div style="padding-bottom: 0.5em">Active plots:</div>
-    <div style="display: flex; gap: 1em; justify-content: center; flex-wrap: wrap;">
-      <mat-card *ngFor="let plottingStatus of plottingStatus$ | async; trackBy: trackBy" class="plot-status-card">
-        <mat-card-header>
-          <mat-card-subtitle style="word-break: break-word">{{plottingStatus.nodeId}}</mat-card-subtitle>
-          <mat-card-title>{{plottingStatus.path}}</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div>
-            Units: {{plottingStatus.numUnits}} ({{plottingStatus.totalFiles.sizeInGib}} GiB)
-          </div>
-          <div>
-            Speed: {{plottingStatus.speedFormatted}}
-          </div>
-          <div>
-            File {{plottingStatus.currentFile.number}}/{{plottingStatus.totalFiles.number}}
-          </div>
-          <div>
-            ETA current file: {{getRelativeEta(plottingStatus.currentFile.eta)}} ({{(plottingStatus.currentFile.progress * 100).toFixed(2)}}%)
-          </div>
-          <div>
-            ETA total: {{getRelativeEta(plottingStatus.totalFiles.eta)}} ({{(plottingStatus.totalFiles.progress * 100).toFixed(2)}}%)
-          </div>
-        </mat-card-content>
-        <mat-card-footer>
-          <mat-progress-bar matTooltip="{{(plottingStatus.currentFile.progress * 100).toFixed(2)}}%" style="padding-bottom: 0.4rem" mode="determinate" [value]="plottingStatus.currentFile.progress * 100"></mat-progress-bar>
-          <mat-progress-bar matTooltip="{{(plottingStatus.totalFiles.progress * 100).toFixed(2)}}%" mode="determinate" [value]="plottingStatus.totalFiles.progress * 100" class="last-progress-bar-in-card"></mat-progress-bar>
-        </mat-card-footer>
-      </mat-card>
-    </div>
+<div style="padding: 0.5em">
+  <form>
+    <mat-form-field>
+      <mat-label>Monitor URL</mat-label>
+      <input matInput [(ngModel)]="monitorUrl" [ngModelOptions]="{standalone: true}">
+    </mat-form-field>
+    <mat-form-field style="padding-left: 1em">
+      <mat-label>Auth token</mat-label>
+      <input matInput [(ngModel)]="authToken" [ngModelOptions]="{standalone: true}">
+    </mat-form-field>
+    <button style="margin-left: 1em" mat-raised-button color="primary" (click)="connect()" [disabled]="isConnectButtonDisabled">Connect</button>
+  </form>
+  <div *ngIf="isConnected" style="display: flex; gap: 1em; flex-direction: column;">
+    <app-system-info [startupInfo$]="startupInfo$" [capacity$]="capacity$"></app-system-info>
+    <app-round-info *ngIf="postRoundInfo$ | async as postRoundInfo" [postRoundInfo]="postRoundInfo"></app-round-info>
+    <app-active-init-proofs *ngIf="hasActiveInitProofs$ | async" [activeInitProofs$]="activeInitProofs$"></app-active-init-proofs>
+    <app-active-proofs *ngIf="hasActiveProofs$ | async" [activeProofs$]="activeProofs$"></app-active-proofs>
+    <app-active-plots *ngIf="hasActivePlots$ | async" [plottingStatus$]="plottingStatus$"></app-active-plots>
   </div>
 </div>

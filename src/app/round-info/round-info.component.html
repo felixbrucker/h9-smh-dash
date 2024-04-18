@@ -1,0 +1,8 @@
+<div>
+    <span *ngIf="!postRoundInfo.isRunning">
+      Next scan in {{getRelativeEta(postRoundInfo.startDate)}} ({{getFormattedDate(postRoundInfo.startDate)}})
+    </span>
+  <span *ngIf="postRoundInfo.isRunning">
+      Scan period active for {{getRelativeEta(postRoundInfo.endDate)}} ({{getFormattedDate(postRoundInfo.endDate)}})
+    </span>
+</div>

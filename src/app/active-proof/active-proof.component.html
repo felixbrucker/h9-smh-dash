@@ -1,0 +1,16 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-subtitle style="word-break: break-word">{{activeProof.nodeId}}</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div>
+      State: {{formatState(activeProof.state)}}
+    </div>
+    <div>
+      Elapsed: {{getElapsedTime(activeProof.stateStartedAt)}}
+    </div>
+    <div>
+      Elapsed total: {{getElapsedTime(activeProof.startedAt)}}
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,5 @@
+.active-plots-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(550px, 1fr));
+  gap: 1em;
+}

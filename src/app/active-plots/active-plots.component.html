@@ -1,0 +1,4 @@
+<div style="padding-bottom: 0.5em">Active plots:</div>
+<div class="active-plots-container">
+  <app-active-plot *ngFor="let plottingStatus of plottingStatus$ | async; trackBy: trackBy" [plottingStatus]="plottingStatus"></app-active-plot>
+</div>

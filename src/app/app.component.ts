@@ -22,9 +22,14 @@ import {MatInput} from '@angular/material/input'
 import {FormsModule} from '@angular/forms'
 import {MatButton} from '@angular/material/button'
 import {PostRoundInfo} from '../types/post-round-info'
-import {ActiveProof, ActiveProofState} from '../types/active-proof'
+import {ActiveProof} from '../types/active-proof'
 import {MatTooltip} from '@angular/material/tooltip'
 import {relativeTimeExtended} from '../extensions/relative-time-extended'
+import {SystemInfoComponent} from './system-info/system-info.component'
+import {RoundInfoComponent} from './round-info/round-info.component'
+import {ActiveInitProofsComponent} from './active-init-proofs/active-init-proofs.component'
+import {ActiveProofsComponent} from './active-proofs/active-proofs.component'
+import {ActivePlotsComponent} from './active-plots/active-plots.component'
 
 
 dayjs.extend(relativeTimeExtended)
@@ -41,7 +46,7 @@ interface ServerToClientEvents {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NgForOf, AsyncPipe, JsonPipe, NgIf, KeyValuePipe, MatChipSet, MatChip, MatChipListbox, MatChipOption, MatCard, MatCardContent, MatCardHeader, MatCardFooter, MatProgressBar, MatCardTitle, MatCardSubtitle, MatGridList, MatGridTile, MatFormField, MatInput, FormsModule, MatLabel, MatButton, MatTooltip],
+  imports: [RouterOutlet, NgForOf, AsyncPipe, JsonPipe, NgIf, KeyValuePipe, MatChipSet, MatChip, MatChipListbox, MatChipOption, MatCard, MatCardContent, MatCardHeader, MatCardFooter, MatProgressBar, MatCardTitle, MatCardSubtitle, MatGridList, MatGridTile, MatFormField, MatInput, FormsModule, MatLabel, MatButton, MatTooltip, SystemInfoComponent, RoundInfoComponent, ActiveInitProofsComponent, ActiveProofsComponent, ActivePlotsComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
@@ -84,7 +89,7 @@ export class AppComponent {
 
   public constructor() {
     this.startupInfo$ = this.startupInfoSubject.pipe(shareReplay(1))
-    this.plottingStatus$ = this.plottingStatusSubject.asObservable()
+    this.plottingStatus$ = this.plottingStatusSubject.pipe(shareReplay(1))
     this.capacity$ = this.capacitySubject.asObservable()
     this.postRoundInfo$ = this.postRoundInfoSubject.asObservable()
     this.activeInitProofs$ = this.activeInitProofsSubject.asObservable()
@@ -113,28 +118,5 @@ export class AppComponent {
     this.socket.on('post-round-info', (postRoundInfo) => this.postRoundInfoSubject.next(postRoundInfo))
     this.socket.on('active-init-proofs', activeInitProofs => this.activeInitProofsSubject.next(Object.values(activeInitProofs)))
     this.socket.on('active-proofs', activeProofs => this.activeProofsSubject.next(Object.values(activeProofs)))
-  }
-
-  public trackBy(index: number, plottingStatus: PlottingStatus): string {
-    return plottingStatus.nodeId
-  }
-
-  public getRelativeEta(eta: string|Date): string {
-    return dayjs(eta).fromNowExtended()
-  }
-
-  public getElapsedTime(date: string|Date): string {
-    return dayjs(date).toNowExtended()
-  }
-
-  public formatState(state: ActiveProofState): string {
-    switch (state) {
-      case ActiveProofState.generatingK2Pow: return 'generating k2pow'
-      case ActiveProofState.readingProofOfSpace: return 'reading POS'
-    }
-  }
-
-  public getFormattedDate(date: string|Date): string {
-    return dayjs(date).format('YYYY-MM-DD HH:mm')
   }
 }
