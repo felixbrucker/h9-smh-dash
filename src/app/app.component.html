@@ -7,7 +7,7 @@
     <mat-label>Auth token</mat-label>
     <input matInput [(ngModel)]="authToken" [ngModelOptions]="{standalone: true}">
   </mat-form-field>
-  <button style="margin-left: 1em" mat-raised-button color="primary" (click)="connect()" [disabled]="!monitorUrl || !authToken">Connect</button>
+  <button style="margin-left: 1em" mat-raised-button color="primary" (click)="connect()" [disabled]="isConnectButtonDisabled">Connect</button>
 </form>
 <div *ngIf="isConnected">
   <div>
@@ -72,36 +72,36 @@
       </mat-card>
     </div>
   </div>
-  <div style="padding-top: 1em">
-    Active plots:
-  </div>
-  <div style="display: flex; gap: 1em; justify-content: center; flex-wrap: wrap; padding-top: 1em">
-    <mat-card *ngFor="let plottingStatus of plottingStatus$ | async; trackBy: trackBy" class="plot-status-card">
-      <mat-card-header>
-        <mat-card-subtitle style="word-break: break-word">{{plottingStatus.nodeId}}</mat-card-subtitle>
-        <mat-card-title>{{plottingStatus.path}}</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div>
-          Units: {{plottingStatus.numUnits}} ({{plottingStatus.totalFiles.sizeInGib}} GiB)
-        </div>
-        <div>
-          Speed: {{plottingStatus.speedFormatted}}
-        </div>
-        <div>
-          File {{plottingStatus.currentFile.number}}/{{plottingStatus.totalFiles.number}}
-        </div>
-        <div>
-          ETA current file: {{getRelativeEta(plottingStatus.currentFile.eta)}} ({{(plottingStatus.currentFile.progress * 100).toFixed(2)}}%)
-        </div>
-        <div>
-          ETA total: {{getRelativeEta(plottingStatus.totalFiles.eta)}} ({{(plottingStatus.totalFiles.progress * 100).toFixed(2)}}%)
-        </div>
-      </mat-card-content>
-      <mat-card-footer>
-        <mat-progress-bar matTooltip="{{(plottingStatus.currentFile.progress * 100).toFixed(2)}}%" style="padding-bottom: 0.4rem" mode="determinate" [value]="plottingStatus.currentFile.progress * 100"></mat-progress-bar>
-        <mat-progress-bar matTooltip="{{(plottingStatus.totalFiles.progress * 100).toFixed(2)}}%" mode="determinate" [value]="plottingStatus.totalFiles.progress * 100" class="last-progress-bar-in-card"></mat-progress-bar>
-      </mat-card-footer>
-    </mat-card>
+  <div style="padding-top: 1em" *ngIf="hasActivePlots$ | async">
+    <div style="padding-bottom: 0.5em">Active plots:</div>
+    <div style="display: flex; gap: 1em; justify-content: center; flex-wrap: wrap;">
+      <mat-card *ngFor="let plottingStatus of plottingStatus$ | async; trackBy: trackBy" class="plot-status-card">
+        <mat-card-header>
+          <mat-card-subtitle style="word-break: break-word">{{plottingStatus.nodeId}}</mat-card-subtitle>
+          <mat-card-title>{{plottingStatus.path}}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div>
+            Units: {{plottingStatus.numUnits}} ({{plottingStatus.totalFiles.sizeInGib}} GiB)
+          </div>
+          <div>
+            Speed: {{plottingStatus.speedFormatted}}
+          </div>
+          <div>
+            File {{plottingStatus.currentFile.number}}/{{plottingStatus.totalFiles.number}}
+          </div>
+          <div>
+            ETA current file: {{getRelativeEta(plottingStatus.currentFile.eta)}} ({{(plottingStatus.currentFile.progress * 100).toFixed(2)}}%)
+          </div>
+          <div>
+            ETA total: {{getRelativeEta(plottingStatus.totalFiles.eta)}} ({{(plottingStatus.totalFiles.progress * 100).toFixed(2)}}%)
+          </div>
+        </mat-card-content>
+        <mat-card-footer>
+          <mat-progress-bar matTooltip="{{(plottingStatus.currentFile.progress * 100).toFixed(2)}}%" style="padding-bottom: 0.4rem" mode="determinate" [value]="plottingStatus.currentFile.progress * 100"></mat-progress-bar>
+          <mat-progress-bar matTooltip="{{(plottingStatus.totalFiles.progress * 100).toFixed(2)}}%" mode="determinate" [value]="plottingStatus.totalFiles.progress * 100" class="last-progress-bar-in-card"></mat-progress-bar>
+        </mat-card-footer>
+      </mat-card>
+    </div>
   </div>
 </div>

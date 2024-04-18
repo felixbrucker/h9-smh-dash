@@ -3,7 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import {io, Socket} from 'socket.io-client'
 import {StartupInfo} from '../types/startup-info'
 import {PlottingStatus} from '../types/plotting-status'
-import {BehaviorSubject, map, Observable, shareReplay, Subject} from 'rxjs'
+import {BehaviorSubject, distinctUntilChanged, map, Observable, shareReplay, Subject} from 'rxjs'
 import {AsyncPipe, JsonPipe, KeyValuePipe, NgForOf, NgIf} from '@angular/common'
 import {MatChip, MatChipListbox, MatChipOption, MatChipSet} from '@angular/material/chips'
 import {
@@ -50,6 +50,10 @@ export class AppComponent {
     return this.socket?.connected ?? false
   }
 
+  public get isConnectButtonDisabled(): boolean {
+    return !this.monitorUrl || !this.authToken || (this.isConnected && !this.didAuthTokenChange && !this.didMonitorUrlChange)
+  }
+
   public monitorUrl?: string
   public authToken?: string
   public readonly startupInfo$: Observable<StartupInfo>
@@ -58,8 +62,18 @@ export class AppComponent {
   public readonly activeProofs$: Observable<ActiveProof[]>
   public readonly hasActiveInitProofs$: Observable<boolean>
   public readonly hasActiveProofs$: Observable<boolean>
+  public readonly hasActivePlots$: Observable<boolean>
   public readonly capacity$: Observable<string>
   public readonly postRoundInfo$: Observable<PostRoundInfo>
+
+  private get didAuthTokenChange(): boolean {
+    return this.authToken !== (localStorage.getItem('authToken') ?? undefined)
+  }
+
+  private get didMonitorUrlChange(): boolean {
+    return this.monitorUrl !== (localStorage.getItem('monitorUrl') ?? undefined)
+  }
+
   private readonly startupInfoSubject: Subject<StartupInfo> = new Subject<StartupInfo>()
   private readonly plottingStatusSubject: Subject<PlottingStatus[]> = new Subject<PlottingStatus[]>()
   private readonly capacitySubject: Subject<string> = new Subject<string>()
@@ -75,8 +89,9 @@ export class AppComponent {
     this.postRoundInfo$ = this.postRoundInfoSubject.asObservable()
     this.activeInitProofs$ = this.activeInitProofsSubject.asObservable()
     this.activeProofs$ = this.activeProofsSubject.asObservable()
-    this.hasActiveInitProofs$ = this.activeInitProofs$.pipe(map(activeInitProofs => activeInitProofs.length > 0))
-    this.hasActiveProofs$ = this.activeProofs$.pipe(map(activeProofs => activeProofs.length > 0))
+    this.hasActiveInitProofs$ = this.activeInitProofs$.pipe(map(activeInitProofs => activeInitProofs.length > 0), distinctUntilChanged())
+    this.hasActiveProofs$ = this.activeProofs$.pipe(map(activeProofs => activeProofs.length > 0), distinctUntilChanged())
+    this.hasActivePlots$ = this.plottingStatus$.pipe(map(plottingStatus => plottingStatus.length > 0), distinctUntilChanged())
     this.monitorUrl = localStorage.getItem('monitorUrl') ?? undefined
     this.authToken = localStorage.getItem('authToken') ?? undefined
     this.connect()
