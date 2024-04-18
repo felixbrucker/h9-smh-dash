@@ -3,6 +3,9 @@ import {AsyncPipe, NgForOf} from '@angular/common'
 import {MatCard, MatCardContent, MatCardHeader, MatCardSubtitle} from '@angular/material/card'
 import {ActiveProof, ActiveProofState} from '../../types/active-proof'
 import dayjs from 'dayjs'
+import {relativeTimeExtended} from '../../extensions/relative-time-extended'
+
+dayjs.extend(relativeTimeExtended)
 
 @Component({
   selector: 'app-active-proof',

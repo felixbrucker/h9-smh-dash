@@ -10,11 +10,7 @@
     </mat-form-field>
     <button style="margin-left: 1em" mat-raised-button color="primary" (click)="connect()" [disabled]="isConnectButtonDisabled">Connect</button>
   </form>
-  <div *ngIf="isConnected" style="display: flex; gap: 1em; flex-direction: column;">
-    <app-system-info [startupInfo$]="startupInfo$" [capacity$]="capacity$"></app-system-info>
-    <app-round-info *ngIf="postRoundInfo$ | async as postRoundInfo" [postRoundInfo]="postRoundInfo"></app-round-info>
-    <app-active-init-proofs *ngIf="hasActiveInitProofs$ | async" [activeInitProofs$]="activeInitProofs$"></app-active-init-proofs>
-    <app-active-proofs *ngIf="hasActiveProofs$ | async" [activeProofs$]="activeProofs$"></app-active-proofs>
-    <app-active-plots *ngIf="hasActivePlots$ | async" [plottingStatus$]="plottingStatus$"></app-active-plots>
+  <div class="dash-container">
+    <app-dash *ngFor="let config of dashboardConfigs" [config]="config" (onDashDelete)="deleteDash($event)"></app-dash>
   </div>
 </div>

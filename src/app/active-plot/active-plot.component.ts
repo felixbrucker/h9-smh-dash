@@ -12,6 +12,9 @@ import {MatProgressBar} from '@angular/material/progress-bar'
 import {MatTooltip} from '@angular/material/tooltip'
 import {PlottingStatus} from '../../types/plotting-status'
 import dayjs from 'dayjs'
+import {relativeTimeExtended} from '../../extensions/relative-time-extended'
+
+dayjs.extend(relativeTimeExtended)
 
 @Component({
   selector: 'app-active-plot',

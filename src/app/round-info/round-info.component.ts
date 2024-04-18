@@ -2,6 +2,9 @@ import {Component, Input} from '@angular/core'
 import {AsyncPipe, NgIf} from '@angular/common'
 import dayjs from 'dayjs'
 import {PostRoundInfo} from '../../types/post-round-info'
+import {relativeTimeExtended} from '../../extensions/relative-time-extended'
+
+dayjs.extend(relativeTimeExtended)
 
 @Component({
   selector: 'app-round-info',

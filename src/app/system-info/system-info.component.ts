@@ -18,4 +18,5 @@ import {StartupInfo} from '../../types/startup-info'
 export class SystemInfoComponent {
   @Input() public startupInfo$!: Observable<StartupInfo>
   @Input() public capacity$!: Observable<string>
+  @Input() public monitorUrl!: string
 }
