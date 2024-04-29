@@ -55,10 +55,6 @@ export class AppComponent {
     return this.dashboardConfigs.some(config => config.monitorUrl === this.monitorUrl && config.authToken === this.authToken)
   }
 
-  private set storedDashboardConfigs(configs: DashConfig[]) {
-    localStorage.setItem('dashboardConfigs', JSON.stringify(configs))
-  }
-
   public constructor() {
     this.dashboardConfigs = this.storedDashboardConfigs
   }
@@ -70,14 +66,19 @@ export class AppComponent {
     this.dashboardConfigs.push({
       monitorUrl: this.monitorUrl,
       authToken: this.authToken,
+      isDisabled: false,
     })
-    this.storedDashboardConfigs = this.dashboardConfigs
+    this.persistDashboards()
     this.monitorUrl = undefined
     this.authToken = undefined
   }
 
   public deleteDash(config: DashConfig) {
     this.dashboardConfigs = this.dashboardConfigs.filter(curr => config.monitorUrl !== curr.monitorUrl && config.authToken !== curr.authToken)
-    this.storedDashboardConfigs = this.dashboardConfigs
+    this.persistDashboards()
+  }
+
+  public persistDashboards() {
+    localStorage.setItem('dashboardConfigs', JSON.stringify(this.dashboardConfigs))
   }
 }

@@ -16,6 +16,7 @@ import {MatProgressSpinner} from '@angular/material/progress-spinner'
 import {MatIcon} from '@angular/material/icon'
 import {MatIconButton, MatMiniFabButton} from '@angular/material/button'
 import {ScanProgress} from '../../types/scan-progress'
+import {MatSlideToggle} from '@angular/material/slide-toggle'
 
 interface ServerToClientEvents {
   'startup-info': (startupInfo: StartupInfo) => void
@@ -41,7 +42,8 @@ interface ServerToClientEvents {
     MatProgressSpinner,
     MatIcon,
     MatIconButton,
-    MatMiniFabButton
+    MatMiniFabButton,
+    MatSlideToggle
   ],
   templateUrl: './dash.component.html',
   styleUrl: './dash.component.scss'
@@ -49,6 +51,7 @@ interface ServerToClientEvents {
 export class DashComponent implements OnInit, OnDestroy {
   @Input() config!: DashConfig
   @Output() onDashDelete: EventEmitter<DashConfig> = new EventEmitter<DashConfig>()
+  @Output() onPersistDashboards: EventEmitter<void> = new EventEmitter<void>()
 
   public get isConnected(): boolean {
     return this.socket?.connected ?? false
@@ -107,5 +110,10 @@ export class DashComponent implements OnInit, OnDestroy {
 
   public deleteDash() {
     this.onDashDelete.emit(this.config)
+  }
+
+  public toggleIsDisabled() {
+    this.config.isDisabled = !this.config.isDisabled
+    this.onPersistDashboards.emit()
   }
 }

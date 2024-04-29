@@ -11,6 +11,6 @@
     <button style="margin-left: 1em" mat-raised-button color="primary" (click)="connect()" [disabled]="isConnectButtonDisabled">Connect</button>
   </form>
   <div class="dash-container">
-    <app-dash *ngFor="let config of dashboardConfigs" [config]="config" (onDashDelete)="deleteDash($event)"></app-dash>
+    <app-dash *ngFor="let config of dashboardConfigs" [config]="config" (onDashDelete)="deleteDash($event)" (onPersistDashboards)="persistDashboards()"></app-dash>
   </div>
 </div>

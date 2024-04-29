@@ -8,10 +8,12 @@
       <app-active-plots *ngIf="hasActivePlots$ | async" [plottingStatus$]="plottingStatus$"></app-active-plots>
     </div>
   </div>
-  <div *ngIf="!isConnected" style="flex-grow: 1">
+  <div *ngIf="!isConnected && !config.isDisabled" style="flex-grow: 1">
     <mat-spinner [diameter]="40"></mat-spinner>
   </div>
-  <div>
+  <div *ngIf="!isConnected && config.isDisabled" style="flex-grow: 1"></div>
+  <div style="display: flex; align-items: center">
+    <mat-slide-toggle color="primary" [checked]="!config.isDisabled" (change)="toggleIsDisabled()"></mat-slide-toggle>
     <button mat-icon-button color="warn" (click)="deleteDash()">
       <mat-icon>delete</mat-icon>
     </button>
