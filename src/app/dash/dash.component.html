@@ -2,7 +2,7 @@
   <div *ngIf="isConnected" style="flex-grow: 1">
     <div style="display: flex; gap: 1em; flex-direction: column;">
       <app-system-info [startupInfo$]="startupInfo$" [capacity$]="capacity$" [monitorUrl]="config.monitorUrl"></app-system-info>
-      <app-round-info *ngIf="postRoundInfo$ | async as postRoundInfo" [postRoundInfo]="postRoundInfo"></app-round-info>
+      <app-round-info *ngIf="postRoundInfo$ | async as postRoundInfo" [postRoundInfo]="postRoundInfo" [scanProgress$]="scanProgress$"></app-round-info>
       <app-active-init-proofs *ngIf="hasActiveInitProofs$ | async" [activeInitProofs$]="activeInitProofs$"></app-active-init-proofs>
       <app-active-proofs *ngIf="hasActiveProofs$ | async" [activeProofs$]="activeProofs$"></app-active-proofs>
       <app-active-plots *ngIf="hasActivePlots$ | async" [plottingStatus$]="plottingStatus$"></app-active-plots>

@@ -3,6 +3,6 @@
       Next scan in {{getRelativeEta(postRoundInfo.startDate)}} ({{getFormattedDate(postRoundInfo.startDate)}})
     </span>
   <span *ngIf="postRoundInfo.isRunning">
-      Scan period active for {{getRelativeEta(postRoundInfo.endDate)}} ({{getFormattedDate(postRoundInfo.endDate)}})
+      Scan period active for {{getRelativeEta(postRoundInfo.endDate)}} ({{getFormattedDate(postRoundInfo.endDate)}}) | {{formattedScanProgress$ | async}}
     </span>
 </div>

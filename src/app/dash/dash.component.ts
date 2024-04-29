@@ -15,6 +15,7 @@ import {DashConfig} from '../../types/dash-config'
 import {MatProgressSpinner} from '@angular/material/progress-spinner'
 import {MatIcon} from '@angular/material/icon'
 import {MatIconButton, MatMiniFabButton} from '@angular/material/button'
+import {ScanProgress} from '../../types/scan-progress'
 
 interface ServerToClientEvents {
   'startup-info': (startupInfo: StartupInfo) => void
@@ -23,6 +24,7 @@ interface ServerToClientEvents {
   'post-round-info': (postRoundInfo: PostRoundInfo) => void
   'active-init-proofs': (activeInitProofs: Record<string, ActiveProof>) => void
   'active-proofs': (activeProofs: Record<string, ActiveProof>) => void
+  'scan-progress': (scanProgress: ScanProgress) => void
 }
 
 @Component({
@@ -61,6 +63,7 @@ export class DashComponent implements OnInit, OnDestroy {
   public readonly hasActivePlots$: Observable<boolean>
   public readonly capacity$: Observable<string>
   public readonly postRoundInfo$: Observable<PostRoundInfo>
+  public readonly scanProgress$: Observable<ScanProgress>
 
   private readonly startupInfoSubject: Subject<StartupInfo> = new Subject<StartupInfo>()
   private readonly plottingStatusSubject: Subject<PlottingStatus[]> = new Subject<PlottingStatus[]>()
@@ -68,6 +71,7 @@ export class DashComponent implements OnInit, OnDestroy {
   private readonly postRoundInfoSubject: Subject<PostRoundInfo> = new Subject<PostRoundInfo>()
   private readonly activeInitProofsSubject: BehaviorSubject<ActiveProof[]> = new BehaviorSubject<ActiveProof[]>([])
   private readonly activeProofsSubject: BehaviorSubject<ActiveProof[]> = new BehaviorSubject<ActiveProof[]>([])
+  private readonly scanProgressSubject: Subject<ScanProgress> = new Subject<ScanProgress>()
   private socket?: Socket<ServerToClientEvents>
 
   public constructor() {
@@ -77,6 +81,7 @@ export class DashComponent implements OnInit, OnDestroy {
     this.postRoundInfo$ = this.postRoundInfoSubject.asObservable()
     this.activeInitProofs$ = this.activeInitProofsSubject.asObservable()
     this.activeProofs$ = this.activeProofsSubject.asObservable()
+    this.scanProgress$ = this.scanProgressSubject.asObservable()
     this.hasActiveInitProofs$ = this.activeInitProofs$.pipe(map(activeInitProofs => activeInitProofs.length > 0), distinctUntilChanged())
     this.hasActiveProofs$ = this.activeProofs$.pipe(map(activeProofs => activeProofs.length > 0), distinctUntilChanged())
     this.hasActivePlots$ = this.plottingStatus$.pipe(map(plottingStatus => plottingStatus.length > 0), distinctUntilChanged())
@@ -87,12 +92,13 @@ export class DashComponent implements OnInit, OnDestroy {
       transports: ['websocket'],
       auth: { token: this.config.authToken },
     })
-    this.socket.on('startup-info', (startupInfo) => this.startupInfoSubject.next(startupInfo))
+    this.socket.on('startup-info', startupInfo => this.startupInfoSubject.next(startupInfo))
     this.socket.on('plotting-status', plottingStatus => this.plottingStatusSubject.next(Object.values(plottingStatus)))
-    this.socket.on('capacity', (capacity) => this.capacitySubject.next(capacity))
-    this.socket.on('post-round-info', (postRoundInfo) => this.postRoundInfoSubject.next(postRoundInfo))
+    this.socket.on('capacity', capacity => this.capacitySubject.next(capacity))
+    this.socket.on('post-round-info', postRoundInfo => this.postRoundInfoSubject.next(postRoundInfo))
     this.socket.on('active-init-proofs', activeInitProofs => this.activeInitProofsSubject.next(Object.values(activeInitProofs)))
     this.socket.on('active-proofs', activeProofs => this.activeProofsSubject.next(Object.values(activeProofs)))
+    this.socket.on('scan-progress', scanProgress => this.scanProgressSubject.next(scanProgress))
   }
 
   public ngOnDestroy() {
