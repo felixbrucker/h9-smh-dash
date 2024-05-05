@@ -11,6 +11,15 @@
     <button style="margin-left: 1em" mat-raised-button color="primary" (click)="connect()" [disabled]="isConnectButtonDisabled">Connect</button>
   </form>
   <div class="dash-container">
-    <app-dash *ngFor="let config of dashboardConfigs" [config]="config" (onDashDelete)="deleteDash($event)" (onPersistDashboards)="persistDashboards()"></app-dash>
+    <div *ngFor="let config of dashboardConfigs" style="display: flex;">
+      <app-dash *ngIf="!config.isDisabled" [config]="config" style="flex-grow: 1"></app-dash>
+      <div *ngIf="config.isDisabled" style="flex-grow: 1"></div>
+      <div style="display: flex; align-items: center">
+        <mat-slide-toggle color="primary" [checked]="!config.isDisabled" (change)="toggleIsDisabled(config)"></mat-slide-toggle>
+        <button mat-icon-button color="warn" (click)="deleteDash(config)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
   </div>
 </div>

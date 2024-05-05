@@ -15,7 +15,7 @@ import {MatGridList, MatGridTile} from '@angular/material/grid-list'
 import {MatFormField, MatLabel} from '@angular/material/form-field'
 import {MatInput} from '@angular/material/input'
 import {FormsModule} from '@angular/forms'
-import {MatButton} from '@angular/material/button'
+import {MatButton, MatIconButton} from '@angular/material/button'
 import {MatTooltip} from '@angular/material/tooltip'
 import {SystemInfoComponent} from './system-info/system-info.component'
 import {RoundInfoComponent} from './round-info/round-info.component'
@@ -24,11 +24,13 @@ import {ActiveProofsComponent} from './active-proofs/active-proofs.component'
 import {ActivePlotsComponent} from './active-plots/active-plots.component'
 import {DashComponent} from './dash/dash.component'
 import {DashConfig} from '../types/dash-config'
+import {MatIcon} from '@angular/material/icon'
+import {MatSlideToggle} from '@angular/material/slide-toggle'
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NgForOf, AsyncPipe, JsonPipe, NgIf, KeyValuePipe, MatChipSet, MatChip, MatChipListbox, MatChipOption, MatCard, MatCardContent, MatCardHeader, MatCardFooter, MatProgressBar, MatCardTitle, MatCardSubtitle, MatGridList, MatGridTile, MatFormField, MatInput, FormsModule, MatLabel, MatButton, MatTooltip, SystemInfoComponent, RoundInfoComponent, ActiveInitProofsComponent, ActiveProofsComponent, ActivePlotsComponent, DashComponent],
+  imports: [RouterOutlet, NgForOf, AsyncPipe, JsonPipe, NgIf, KeyValuePipe, MatChipSet, MatChip, MatChipListbox, MatChipOption, MatCard, MatCardContent, MatCardHeader, MatCardFooter, MatProgressBar, MatCardTitle, MatCardSubtitle, MatGridList, MatGridTile, MatFormField, MatInput, FormsModule, MatLabel, MatButton, MatTooltip, SystemInfoComponent, RoundInfoComponent, ActiveInitProofsComponent, ActiveProofsComponent, ActivePlotsComponent, DashComponent, MatIcon, MatIconButton, MatSlideToggle],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
@@ -78,7 +80,12 @@ export class AppComponent {
     this.persistDashboards()
   }
 
-  public persistDashboards() {
+  public toggleIsDisabled(config: DashConfig) {
+    config.isDisabled = !config.isDisabled
+    this.persistDashboards()
+  }
+
+  private persistDashboards() {
     localStorage.setItem('dashboardConfigs', JSON.stringify(this.dashboardConfigs))
   }
 }

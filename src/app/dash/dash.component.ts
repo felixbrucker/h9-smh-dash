@@ -50,8 +50,6 @@ interface ServerToClientEvents {
 })
 export class DashComponent implements OnInit, OnDestroy {
   @Input() config!: DashConfig
-  @Output() onDashDelete: EventEmitter<DashConfig> = new EventEmitter<DashConfig>()
-  @Output() onPersistDashboards: EventEmitter<void> = new EventEmitter<void>()
 
   public get isConnected(): boolean {
     return this.socket?.connected ?? false
@@ -106,14 +104,5 @@ export class DashComponent implements OnInit, OnDestroy {
 
   public ngOnDestroy() {
     this.socket?.close()
-  }
-
-  public deleteDash() {
-    this.onDashDelete.emit(this.config)
-  }
-
-  public toggleIsDisabled() {
-    this.config.isDisabled = !this.config.isDisabled
-    this.onPersistDashboards.emit()
   }
 }
